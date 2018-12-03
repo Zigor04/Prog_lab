@@ -1,11 +1,3 @@
-/*10. База данных "Авиакасса"
- Пополнение базы.+
- Редактирование базы.+
- Удаление записей. +
- Подбор маршрута с наименьшим временем ожидания при пересадке. +
- Подбор маршрута с наименьшей стоимостью. +
-*/
-
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
@@ -24,6 +16,7 @@ typedef struct Node
 
 	//Pointer to next Node
 	struct Node *ptr_next;
+
 } Node;
 
 static Node *head_ptr;//указатель на первый элемент списка
@@ -224,9 +217,10 @@ int edit_Node(int num_flight)//редактирование рейса(оста�
 
 	while (nNode->n_flight != num_flight)
 	{
-		if (nNode == NULL)
+		if (nNode->ptr_next == NULL)
 		{
 			printf("Такого рейса нет");
+			system("pause");
 			return 1;
 		}
 		nNode = nNode->ptr_next;
@@ -367,7 +361,7 @@ int main()
 			//добавить рейс
 			print_table();
 			printf("\n\n");
-			printf("Введите номер строки, в которую нужно впихнуть новый рейс:");
+			printf("Введите номер строки, в которую нужно впихнуть новый рейс, формата :");
 			scanf("%d", &num_flight);
 
 			add_Node_ptr = add_flight(num_flight);
@@ -375,7 +369,7 @@ int main()
 			system("cls");
 			//заполнеие узла списка
 
-			printf("Введите номер рейса: ");
+			printf("Введите номер рейса, численного формата: ");
 			scanf("%d", &add_Node_ptr->n_flight);
 			printf("\n");
 
@@ -480,21 +474,21 @@ int main()
 			scanf_s("%s", &line, 50);
 
 			Node_ptr = head_ptr;
-			min = 2100000000;
+			min = (float) 2100000000;
 			while (Node_ptr->ptr_next != NULL)
 			{
 				if (strcmp(line, Node_ptr->to) == 0)
 				{
-					if (Node_ptr->time_wait < min)
+					if (Node_ptr->price < min)
 					{
-						min = Node_ptr->time_wait;
+						min = Node_ptr->price;
 						Node_min = Node_ptr;
 					}
 				}
 				Node_ptr = Node_ptr->ptr_next;
 			}
 
-			printf("До города %s самый дешёвый рейс номер: %d\n", line, Node_min->n_flight);
+			printf("В города %s самый дешёвый рейс номер: %d. Цена:%f\n", line, Node_min->n_flight,Node_min->price);
 			system("pause");
 
 			break;
