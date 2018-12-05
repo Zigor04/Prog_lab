@@ -27,7 +27,7 @@ void give_Data(char buf[], Node *pNode)
 {
 	int i;
 	char line[50];
-	char *ptr_line = line , *ptr_buf = buf;
+	char *ptr_line = line, *ptr_buf = buf;
 
 	//инициализация n_flight
 	while (*ptr_buf != ' ')
@@ -61,7 +61,7 @@ void give_Data(char buf[], Node *pNode)
 		ptr_buf++;
 	}
 	*ptr_line = '\0';
-	pNode->price =(float) atof(line);
+	pNode->price = (float)atof(line);
 	ptr_buf++;
 	ptr_line = line;
 
@@ -78,7 +78,7 @@ void give_Data(char buf[], Node *pNode)
 
 
 	//инициализация time_wait
-	while (*ptr_buf >='0' && *ptr_buf<='9' )
+	while (*ptr_buf >= '0' && *ptr_buf <= '9')
 	{
 		*ptr_line = *ptr_buf;
 		ptr_line++;
@@ -86,13 +86,13 @@ void give_Data(char buf[], Node *pNode)
 	}
 	*ptr_line = '\0';
 	pNode->time_wait = atoi(line);
-	
+
 }
 
 //функция для получения нового узла
 Node * give_next_Node(Node *pNode)//аргумент-указатель на данный узел. Выделяет память,инициализирует ptr_next для следующего узла и возвращает указатель на следующий узел
 {
-	
+
 	Node *Nnode;//указатель на новый узел
 	Nnode = (Node *)malloc(sizeof(Node));//выделение памяти для нового узла
 	pNode->ptr_next = Nnode;
@@ -123,7 +123,7 @@ void delete_node(Node *pNode)
 				prevNode = nNode;
 				nNode = nNode->ptr_next;
 			}
-			free(nNode);  
+			free(nNode);
 			prevNode->ptr_next = NULL;
 		}
 		else//если удаляемый узел не является началом или концом списка
@@ -135,7 +135,7 @@ void delete_node(Node *pNode)
 			{
 				prevNode = nNode;
 				nNode = nNode->ptr_next;
-			} 
+			}
 
 			prevNode->ptr_next = nNode->ptr_next;
 			free(nNode);
@@ -152,7 +152,7 @@ void print_table()
 
 	while (nNode != NULL)
 	{
-		printf("%d",nNode->n_flight);
+		printf("%d", nNode->n_flight);
 		printf(" ");
 
 		printf("%s", nNode->to);
@@ -185,7 +185,7 @@ Node *add_flight(int num_string_add)
 		head_ptr = new_ptr;
 		return head_ptr;
 	}
-	
+
 	nNode = head_ptr;
 	prevNode = nNode;
 
@@ -203,7 +203,7 @@ Node *add_flight(int num_string_add)
 		nNode = nNode->ptr_next;
 
 	}
-	
+
 	new_ptr = (Node *)malloc(sizeof(Node));
 	prevNode->ptr_next = new_ptr;
 	new_ptr->ptr_next = nNode;
@@ -244,7 +244,7 @@ int edit_Node(int num_flight)//редактирование рейса(оста�
 	if (bool)
 	{
 		printf("Введите город в который направляется рейс:");
-		scanf_s("%s",&nNode->to,50);
+		scanf_s("%s", &nNode->to, 50);
 		printf("\n");
 		bool = 0;
 	}
@@ -268,7 +268,7 @@ int edit_Node(int num_flight)//редактирование рейса(оста�
 	if (bool)
 	{
 		printf("Введите время вылета-приземления фаормата :'10:50-15:30'");
-		scanf_s("%s", &nNode->time_t_l,15);
+		scanf_s("%s", &nNode->time_t_l, 15);
 		printf("\n");
 		bool = 0;
 	}
@@ -286,6 +286,19 @@ int edit_Node(int num_flight)//редактирование рейса(оста�
 	}
 
 	return;
+
+}
+
+void struct_free()
+{
+	Node *pNode = NULL;
+	Node *nNode = head_ptr;
+
+	while ((pNode = nNode) != NULL)
+	{
+		nNode = nNode->ptr_next;
+		free(pNode);
+	}
 
 }
 
@@ -324,7 +337,7 @@ int main()
 			give_Data(line, head_ptr);//заполнение полей Data первого узла звписка
 		}
 	}
-	
+
 	//выделение памяти и инициализация полей Data второго Node
 	if (!feof(fptr))
 	{
@@ -374,7 +387,7 @@ int main()
 			printf("\n");
 
 			printf("Введите город в который направляется рейс: ");
-			scanf_s("%s", &add_Node_ptr->to,50);
+			scanf_s("%s", &add_Node_ptr->to, 50);
 			printf("\n");
 
 			printf("Введите цену рейса в рублях: ");
@@ -382,7 +395,7 @@ int main()
 			printf("\n");
 
 			printf("Введите время вылета-приземления фаормата '10:50-15:30': ");
-			scanf_s("%s",add_Node_ptr->time_t_l, 15);
+			scanf_s("%s", add_Node_ptr->time_t_l, 15);
 			printf("\n");
 
 			printf("Введите врея ожидания при пересадках в минутах: ");
@@ -442,7 +455,7 @@ int main()
 			print_table();
 			printf("\n\n");
 			printf("Введите город в который вы хотите полететь: ");
-			scanf_s("%s",&line, 50);
+			scanf_s("%s", &line, 50);
 			printf("\n\n");
 
 			Node_ptr = head_ptr;
@@ -474,7 +487,7 @@ int main()
 			scanf_s("%s", &line, 50);
 
 			Node_ptr = head_ptr;
-			min = (float) 2100000000;
+			min = (float)2100000000;
 			while (Node_ptr->ptr_next != NULL)
 			{
 				if (strcmp(line, Node_ptr->to) == 0)
@@ -488,7 +501,7 @@ int main()
 				Node_ptr = Node_ptr->ptr_next;
 			}
 
-			printf("В города %s самый дешёвый рейс номер: %d. Цена:%f\n", line, Node_min->n_flight,Node_min->price);
+			printf("В города %s самый дешёвый рейс номер: %d. Цена:%f\n", line, Node_min->n_flight, Node_min->price);
 			system("pause");
 
 			break;
@@ -501,10 +514,10 @@ int main()
 			system("pause");
 
 			break;
-		case 0: 
+		case 0:
 			break;
 
-		default: 
+		default:
 			printf("Вы ввели несуществующую опцию, введите ещё раз!");
 			system("pause");
 
@@ -517,7 +530,7 @@ int main()
 	fclose(fptr);
 	//перезапить изменённой базы данных в файл
 	fptr = fopen("AviaCassa.txt", "wt");
-	if( fptr == NULL)
+	if (fptr == NULL)
 		printf("Ошибка перезаписи в файл, исходная авиакасса останется неизменённой");
 
 	Node_ptr = head_ptr;
@@ -525,7 +538,7 @@ int main()
 	{
 		//запись в файл
 
-		fprintf(fptr,"%d", Node_ptr->n_flight);
+		fprintf(fptr, "%d", Node_ptr->n_flight);
 		fprintf(fptr, " ");
 
 		fprintf(fptr, "%s", Node_ptr->to);
@@ -543,7 +556,10 @@ int main()
 		//окончание записи в файл
 		Node_ptr = Node_ptr->ptr_next;
 	}
-	
+
 	fclose(fptr);
+
+	struct_free();//освобождение памяти, занятой списком
+
 	return 0;
 }
