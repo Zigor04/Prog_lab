@@ -1,3 +1,12 @@
+/* Пример файла "AviaCassa.txt":
+|.Номер.рейса.|......Город.направления......|..Цена(В.рублях)..|Время.вылета-прилёта|Ожидание(пересадки)|
+|..........142|.......................Москва|..............1023|.........17:01-15:20|.................30|
+|.........4738|...................Красноярск|.............10740|.......5:04-10:51 51|................204|
+|........83574|.......................Москва|..............1532|.........10:41-12:32|..................0|
+|.........2834|......................Иркутск|.............15234|.........15:41-22:01|.................41|
+|.........2834|..............Нижний Новгород|.............15234|.........15:41-22:01|.................41|
+|.........2833|.......................Москва|.............15234|.........15:41-22:01|.................41|
+*/
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
@@ -8,9 +17,9 @@
 typedef struct Node
 {
 	//Data
-	long int n_flight;//номер рейса!!!(Номер рейса свой для каждого рейса)!!!
+	int n_flight;//номер рейса!!!(Номер рейса свой для каждого рейса)!!!
 	char to[50];//город, в который направляется рейс
-	float price;//цена 
+	int price;//цена (в рублях)
 	char time_t_l[15];//время вылета-прилёта
 	int time_wait;//премя ожидания при пересадке(в минутах)
 
@@ -22,7 +31,7 @@ typedef struct Node
 static Node *head_ptr;//указатель на первый элемент списка
 
 /*функция для инициализации полей одного узла, используя строку(строка содержит все поля одного узла,
-поля в строке разделены меду собой одним пробелом)*/
+поля в строке разделены меду собой '.'и'|')*/
 void give_Data(char buf[], Node *pNode)
 {
 	int i;
@@ -30,55 +39,65 @@ void give_Data(char buf[], Node *pNode)
 	char *ptr_line = line, *ptr_buf = buf;
 
 	//инициализация n_flight
-	while (*ptr_buf != ' ')
+	while (*ptr_buf == '.' || *ptr_buf == '|')
+		ptr_buf++;
+
+	while (*ptr_buf != '|')
 	{
 		*ptr_line = *ptr_buf;
 		ptr_line++;
 		ptr_buf++;
 	}
-	*ptr_line++;
 	*ptr_line = '\0';
 	pNode->n_flight = atoi(line);
-	ptr_buf++;
 	ptr_line = line;
 
 	//инициализация to[]
+	while (*ptr_buf == '.' || *ptr_buf == '|')
+		ptr_buf++;
+
 	i = 0;
-	while (*ptr_buf != ' ')
+	while (*ptr_buf != '|')
 	{
 		pNode->to[i] = *ptr_buf;
 		ptr_buf++;
 		i++;
 	}
 	pNode->to[i] = '\0';
-	ptr_buf++;
 
 	//инициализация price
-	while (*ptr_buf != ' ')
+	while (*ptr_buf == '.' || *ptr_buf == '|')
+		ptr_buf++;
+
+	while (*ptr_buf != '|')
 	{
 		*ptr_line = *ptr_buf;
 		ptr_line++;
 		ptr_buf++;
 	}
 	*ptr_line = '\0';
-	pNode->price = (float)atof(line);
-	ptr_buf++;
+	pNode->price = atoi(line);
 	ptr_line = line;
 
 	//инициализация time_t_l
+	while (*ptr_buf == '.' || *ptr_buf == '|')
+		ptr_buf++;
+
 	i = 0;
-	while (*ptr_buf != ' ')
+	while (*ptr_buf != '|')
 	{
 		pNode->time_t_l[i] = *ptr_buf;
 		ptr_buf++;
 		i++;
 	}
 	pNode->time_t_l[i] = '\0';
-	ptr_buf++;
 
 
 	//инициализация time_wait
-	while (*ptr_buf >= '0' && *ptr_buf <= '9')
+	while (*ptr_buf == '.' || *ptr_buf == '|')
+		ptr_buf++;
+
+	while (*ptr_buf != '|')
 	{
 		*ptr_line = *ptr_buf;
 		ptr_line++;
@@ -144,27 +163,68 @@ void delete_node(Node *pNode)
 }
 
 //вывод на экран всех рейсов
-void print_table()
+void print_table(char *line_table)
 {
+	printf("%s", line_table);
+
 	Node *nNode;
 	nNode = head_ptr;
-	char *ptr = NULL;
+	int len, ry;
 
 	while (nNode != NULL)
 	{
+		//
+		printf("|");
+		len = 0;
+		ry = nNode->n_flight;
+		do
+		{
+			len++;
+			ry /= 10;
+		} while (ry != 0);
+		for (ry = 13 - len; ry != 0; ry--)
+			printf(".");
+
 		printf("%d", nNode->n_flight);
-		printf(" ");
-
+		printf("|");
+		//
+		len = strlen(nNode->to);
+		for (ry = 29 - len; ry != 0; ry--)
+			printf(".");
 		printf("%s", nNode->to);
-		printf(" ");
+		printf("|");
+		//
+		len = 0;
+		ry = nNode->price;
+		do
+		{
+			len++;
+			ry /= 10;
+		} while (ry != 0);
+		for (ry = 18 - len; ry != 0; ry--)
+			printf(".");
 
-		printf("%f", nNode->price);
-		printf(" ");
-
+		printf("%d", nNode->price);
+		printf("|");
+		//
+		len = strlen(nNode->time_t_l);
+		for (ry = 20 - len; ry != 0; ry--)
+			printf(".");
 		printf("%s", nNode->time_t_l);
-		printf(" ");
+		printf("|");
+		//
+		len = 0;
+		ry = nNode->time_wait;
+		do
+		{
+			len++;
+			ry /= 10;
+		} while (ry != 0);
+		for (ry = 19 - len; ry != 0; ry--)
+			printf(".");
 
 		printf("%d", nNode->time_wait);
+		printf("|");
 		printf("\n");
 
 		nNode = nNode->ptr_next;
@@ -210,7 +270,7 @@ Node *add_flight(int num_string_add)
 	return new_ptr;
 }
 
-int edit_Node(int num_flight)//редактирование рейса(осталось сделать так, что бы редактировать некоторый поля)
+int edit_Node(int num_flight)//редактирование рейса
 {
 	Node *nNode = head_ptr;
 	int bool = 0;
@@ -219,13 +279,13 @@ int edit_Node(int num_flight)//редактирование рейса(оста�
 	{
 		if (nNode->ptr_next == NULL)
 		{
-			printf("Такого рейса нет");
+			printf("Такого рейса нет\n");
 			system("pause");
 			return 1;
 		}
 		nNode = nNode->ptr_next;
 	}
-	printf("Введите [1],если хотите изменить номер рейса: ");
+	printf("[1] Если хотите изменить номер рейса: \n[0] Если хотите оставить неизменным номер рейса: \n");
 	scanf("%d", &bool);
 	printf("\n");
 
@@ -237,7 +297,7 @@ int edit_Node(int num_flight)//редактирование рейса(оста�
 		bool = 0;
 	}
 
-	printf("Введите [1],если хотите изменить город в который направляется рейс: ");
+	printf("[1] Если хотите изменить город направления данного рейса: \n[0] Если хотите оставить неизменным город направления данного рейса: \n");
 	scanf("%d", &bool);
 	printf("\n");
 
@@ -245,23 +305,24 @@ int edit_Node(int num_flight)//редактирование рейса(оста�
 	{
 		printf("Введите город в который направляется рейс:");
 		scanf_s("%s", &nNode->to, 50);
+		getchar();
 		printf("\n");
 		bool = 0;
 	}
 
-	printf("Введите [1],если хотите изменить цену рейса: ");
+	printf("[1] Если хотите изменить цену: \n[0] Если хотите оставить цену: \n");
 	scanf("%d", &bool);
 	printf("\n");
 
 	if (bool)
 	{
 		printf("Введите цену рейса в рублях:");
-		scanf("%f", &nNode->price);
+		scanf("%d", &nNode->price);
 		printf("\n");
 		bool = 0;
 	}
 
-	printf("Введите [1],если хотите изменить время вылета-приземления: ");
+	printf("[1] Если хотите изменить время вылета-прилёта: \n[0] Если хотите оставить время вылета-прилёта: \n");
 	scanf("%d", &bool);
 	printf("\n");
 
@@ -269,11 +330,12 @@ int edit_Node(int num_flight)//редактирование рейса(оста�
 	{
 		printf("Введите время вылета-приземления фаормата :'10:50-15:30'");
 		scanf_s("%s", &nNode->time_t_l, 15);
+		getchar();
 		printf("\n");
 		bool = 0;
 	}
 
-	printf("Введите [1],если хотите изменить время ожидания при пересадках");
+	printf("[1] Если хотите изменить время ожидания при пересадках: \n[0] Если хотите оставить неизменным вреям ожидания при пересадках: \n");
 	scanf("%d", &bool);
 	printf("\n");
 
@@ -285,7 +347,7 @@ int edit_Node(int num_flight)//редактирование рейса(оста�
 		bool = 0;
 	}
 
-	return;
+	return 0;
 
 }
 
@@ -307,6 +369,7 @@ int main()
 	FILE *fptr;//указатель на файлы
 	char *ptr;//Указатель для получаемой строки из исходного файла
 	char line[MAXLINE];
+	char line_titul_table[MAXLINE];
 	Node *Node_ptr = NULL;
 	int choice_main;//переменная для выбора одного из 5 (см. ТЗ)
 	int num_flight;
@@ -324,7 +387,7 @@ int main()
 		printf("Error opening or creating file or my code is fu*king turd");
 		return 1;
 	}
-
+	ptr = fgets(line_titul_table, MAXLINE, fptr);//запоминаем 1 строку
 	//выделение памяти и инициализация полей Data первого Node
 	if (!feof(fptr))
 	{
@@ -364,7 +427,7 @@ int main()
 	{
 		system("cls");
 
-		printf("[0] Выйти из программы.\n[1] Добавить рейс.\n[2] Редактировать рейс.\n[3] Удалить рейс.\n[4] Подобрать маршрут с наименьшим временем ожидания при пересадке.\n[5] Подобратьмаршрут с наименьшей стоимостью.\n[6] Вывести авиакассу на экран\n\n");
+		printf("[0] Выйти из программы.\n[1] Добавить рейс.\n[2] Редактировать рейс.\n[3] Удалить рейс.\n[4] Подобрать маршрут с наименьшим временем ожидания при пересадке.\n[5] Подобрать маршрут с наименьшей стоимостью.\n[6] Вывести авиакассу на экран\n\n");
 		scanf("%d", &choice_main);
 
 		switch (choice_main)
@@ -372,9 +435,9 @@ int main()
 		case 1:
 			system("cls");
 			//добавить рейс
-			print_table();
+			print_table(line_titul_table);
 			printf("\n\n");
-			printf("Введите номер строки, в которую нужно впихнуть новый рейс, формата :");
+			printf("Введите номер строки, в которую нужно впихнуть новый рейс: ");
 			scanf("%d", &num_flight);
 
 			add_Node_ptr = add_flight(num_flight);
@@ -388,22 +451,24 @@ int main()
 
 			printf("Введите город в который направляется рейс: ");
 			scanf_s("%s", &add_Node_ptr->to, 50);
+			getchar();
 			printf("\n");
 
 			printf("Введите цену рейса в рублях: ");
-			scanf("%f", &add_Node_ptr->price);
+			scanf("%d", &add_Node_ptr->price);
 			printf("\n");
 
 			printf("Введите время вылета-приземления фаормата '10:50-15:30': ");
 			scanf_s("%s", add_Node_ptr->time_t_l, 15);
+			getchar();
 			printf("\n");
 
-			printf("Введите врея ожидания при пересадках в минутах: ");
+			printf("Введите время ожидания при пересадках в минутах: ");
 			scanf("%d", &add_Node_ptr->time_wait);
 			printf("\n");
 
 			system("cls");
-			print_table();
+			print_table(line_titul_table);
 
 			system("pause");
 
@@ -412,7 +477,7 @@ int main()
 		case 2:
 			system("cls");
 			//редактировать рейс
-			print_table();
+			print_table(line_titul_table);
 			printf("\n\n");
 			printf("Введите номер рейса, который хотите редактировать: ");
 			scanf("%d", &num_flight);
@@ -421,7 +486,7 @@ int main()
 			edit_Node(num_flight);//редактирование рейса
 
 			system("cls");
-			print_table();
+			print_table(line_titul_table);
 			system("pause");
 
 			break;
@@ -429,7 +494,7 @@ int main()
 		case 3:
 			system("cls");
 			//удалить рейс
-			print_table();
+			print_table(line_titul_table);
 			printf("\n\n");
 			printf("Введите номер рейса, который хотите удалить: ");
 			scanf("%d", &num_delete);
@@ -444,7 +509,7 @@ int main()
 			delete_node(Node_ptr);
 
 			system("cls");
-			print_table();
+			print_table(line_titul_table);
 			system("pause");
 
 			break;
@@ -452,15 +517,16 @@ int main()
 		case 4:
 			system("cls");
 			//подобрать маршрут с наименьшим временем ожиданя при пересадке
-			print_table();
+			print_table(line_titul_table);
 			printf("\n\n");
 			printf("Введите город в который вы хотите полететь: ");
 			scanf_s("%s", &line, 50);
+			getchar();
 			printf("\n\n");
 
 			Node_ptr = head_ptr;
 			min = 2100000000;
-			while (Node_ptr->ptr_next != NULL)
+			while (Node_ptr != NULL)
 			{
 				if (strcmp(line, Node_ptr->to) == 0)
 				{
@@ -473,7 +539,7 @@ int main()
 				Node_ptr = Node_ptr->ptr_next;
 			}
 
-			printf("На маршруте номер %d наименьшее время ожидания при пересадке: %d минут\n", Node_min->n_flight, Node_min->time_wait);
+			printf("У маршрута номер %d наименьшее время ожидания при пересадке: %d минут\n", Node_min->n_flight, Node_min->time_wait);
 			system("pause");
 
 			break;
@@ -481,14 +547,15 @@ int main()
 			system("cls");
 			//подобрать маршрут наименьший по стоимости
 
-			print_table();
+			print_table(line_titul_table);
 			printf("\n\n");
 			printf("Введите город в который вы хотите полететь\n");
 			scanf_s("%s", &line, 50);
+			getchar();
 
 			Node_ptr = head_ptr;
-			min = (float)2100000000;
-			while (Node_ptr->ptr_next != NULL)
+			min = 2100000000;
+			while (Node_ptr != NULL)
 			{
 				if (strcmp(line, Node_ptr->to) == 0)
 				{
@@ -501,7 +568,7 @@ int main()
 				Node_ptr = Node_ptr->ptr_next;
 			}
 
-			printf("В города %s самый дешёвый рейс номер: %d. Цена:%f\n", line, Node_min->n_flight, Node_min->price);
+			printf("В город %s самый дешёвый рейс номер: %d. Цена:%d\n", line, Node_min->n_flight, Node_min->price);
 			system("pause");
 
 			break;
@@ -509,7 +576,7 @@ int main()
 		case 6:
 			//вывод авиакассы на экран
 			system("cls");
-			print_table();
+			print_table(line_titul_table);
 			printf("\n");
 			system("pause");
 
@@ -531,32 +598,80 @@ int main()
 	//перезапить изменённой базы данных в файл
 	fptr = fopen("AviaCassa.txt", "wt");
 	if (fptr == NULL)
-		printf("Ошибка перезаписи в файл, исходная авиакасса останется неизменённой");
-
-	Node_ptr = head_ptr;
-	while (Node_ptr != NULL)
 	{
-		//запись в файл
-
-		fprintf(fptr, "%d", Node_ptr->n_flight);
-		fprintf(fptr, " ");
-
-		fprintf(fptr, "%s", Node_ptr->to);
-		fprintf(fptr, " ");
-
-		fprintf(fptr, "%f", Node_ptr->price);
-		fprintf(fptr, " ");
-
-		fprintf(fptr, "%s", Node_ptr->time_t_l);
-		fprintf(fptr, " ");
-
-		fprintf(fptr, "%d", Node_ptr->time_wait);
-		fprintf(fptr, "\n");
-
-		//окончание записи в файл
-		Node_ptr = Node_ptr->ptr_next;
+		printf("Ошибка перезаписи в файл, исходная авиакасса останется неизменённой");
 	}
+	else
+	{
+		fputs(line_titul_table, fptr);
 
+		Node_ptr = head_ptr;
+		while (Node_ptr != NULL)
+		{
+			//запись в файл
+
+
+			int len, ry;
+			fputc('|', fptr);
+			len = 0;
+			ry = Node_ptr->n_flight;
+
+			do
+			{
+				len++;
+				ry /= 10;
+			}while (ry != 0);
+
+			for (ry = 13 - len; ry != 0; ry--)
+				fputc('.', fptr);
+
+			fprintf(fptr, "%d", Node_ptr->n_flight);
+			fputc('|', fptr);
+			//
+			len = strlen(Node_ptr->to);
+			for (ry = 29 - len; ry != 0; ry--)
+				fputc('.', fptr);
+			fputs( Node_ptr->to, fptr);
+			fputc('|', fptr);
+			//
+			len = 0;
+			ry = Node_ptr->price;
+			do
+			{
+				len++;
+				ry /= 10;
+			} while (ry != 0);
+			for (ry = 18 - len; ry != 0; ry--)
+				fputc('.', fptr);
+
+			fprintf(fptr, "%d", Node_ptr->price);
+			fputc('|', fptr);
+			//
+			len = strlen(Node_ptr->time_t_l);
+			for (ry = 20 - len; ry != 0; ry--)
+				fputc('.', fptr);
+			fputs( Node_ptr->time_t_l, fptr);
+			fputc('|', fptr);
+			//
+			len = 0;
+			ry = Node_ptr->time_wait;
+			do
+			{
+				len++;
+				ry /= 10;
+			} while (ry != 0);
+			for (ry = 19 - len; ry != 0; ry--)
+				fputc('.', fptr);
+
+			fprintf(fptr, "%d", Node_ptr->time_wait);
+			fputc('|', fptr);
+			fputc('\n', fptr);
+
+			Node_ptr = Node_ptr->ptr_next;
+
+		}
+		//окончание перезаписи в файл
+	}
 	fclose(fptr);
 
 	struct_free();//освобождение памяти, занятой списком
