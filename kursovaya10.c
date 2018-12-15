@@ -22,6 +22,7 @@
 |........54648|...................Красноярск|.............34520|..........5:04-10:51|...............2354|
 |.....45647574|.......................Москва|..............1622|.........10:41-12:32|................234|
 */
+
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
@@ -319,8 +320,8 @@ int edit_Node(int num_flight)//редактирование рейса
 	if (bool)
 	{
 		printf("Введите город в который направляется рейс:");
-		scanf_s("%s", &nNode->to, 50);
 		getchar();
+		gets(nNode->to);
 		printf("\n");
 		bool = 0;
 	}
@@ -344,8 +345,8 @@ int edit_Node(int num_flight)//редактирование рейса
 	if (bool)
 	{
 		printf("Введите время вылета-приземления фаормата :'10:50-15:30'");
-		scanf_s("%s", &nNode->time_t_l, 15);
 		getchar();
+		gets(nNode->time_t_l);
 		printf("\n");
 		bool = 0;
 	}
@@ -455,6 +456,7 @@ int main()
 			printf("Введите номер строки, в которую нужно впихнуть новый рейс: ");
 			scanf("%d", &num_flight);
 
+
 			add_Node_ptr = add_flight(num_flight);
 
 			system("cls");
@@ -463,24 +465,27 @@ int main()
 			printf("Введите номер рейса, численного формата: ");
 			scanf("%d", &add_Node_ptr->n_flight);
 			printf("\n");
+			getchar();
 
 			printf("Введите город в который направляется рейс: ");
-			scanf_s("%s", &add_Node_ptr->to, 50);
-			getchar();
+			gets(add_Node_ptr->to);
+
 			printf("\n");
 
 			printf("Введите цену рейса в рублях: ");
 			scanf("%d", &add_Node_ptr->price);
 			printf("\n");
+			getchar();
 
 			printf("Введите время вылета-приземления фаормата '10:50-15:30': ");
-			scanf_s("%s", add_Node_ptr->time_t_l, 15);
-			getchar();
+			gets( add_Node_ptr->time_t_l);
+
 			printf("\n");
 
 			printf("Введите время ожидания при пересадках в минутах: ");
 			scanf("%d", &add_Node_ptr->time_wait);
 			printf("\n");
+			getchar();
 
 			system("cls");
 			print_table(line_titul_table);
@@ -514,6 +519,7 @@ int main()
 			printf("Введите номер рейса, который хотите удалить: ");
 			scanf("%d", &num_delete);
 			printf("\n");
+			getchar();
 
 			Node_ptr = head_ptr;
 			while (Node_ptr->n_flight != num_delete)
@@ -535,8 +541,8 @@ int main()
 			print_table(line_titul_table);
 			printf("\n\n");
 			printf("Введите город в который вы хотите полететь: ");
-			scanf_s("%s", &line, 50);
 			getchar();
+			gets(line);
 			printf("\n\n");
 
 			Node_ptr = head_ptr;
@@ -565,8 +571,8 @@ int main()
 			print_table(line_titul_table);
 			printf("\n\n");
 			printf("Введите город в который вы хотите полететь\n");
-			scanf_s("%s", &line, 50);
 			getchar();
+			gets(line);
 
 			Node_ptr = head_ptr;
 			min = 2100000000;
