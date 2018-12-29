@@ -27,7 +27,7 @@ int main()
 	}
 
 	
-	for (i = 0; ; i++)
+	for (i = 0;i+1<N ; i++)
 	{
 		if (*(ptr_array + i) <= 0)
 		{
@@ -38,10 +38,8 @@ int main()
 		{
 			for (int k = 0; k< *(ptr_array+ i); k++)
 			{
-				fputc('A', pf_out);
+				fputc('10+k', pf_out);
 			}
-			if ((i + 1) == N)
-				break;
 			fputc('\n', pf_out);
 		}
 	}
